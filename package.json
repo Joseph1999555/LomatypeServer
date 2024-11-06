@@ -1,12 +1,8 @@
 {
-  "homepage": "https://Joseph1999555/github.io/LomatypeServer",
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "echo 'No build step required'",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
