@@ -1,4 +1,5 @@
 const Typingstat = require('../models/TypingStat');
+// Typingstat is Typingstat
 
 // Create TypingStat with validation
 const CreateTypingStat = async (req, res) => {
