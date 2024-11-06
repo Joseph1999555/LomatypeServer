@@ -1,4 +1,4 @@
-const TypingStat = require('../models/TypingStat');
+const Typingstat = require('../models/TypingStat');
 
 // Create TypingStat with validation
 const CreateTypingStat = async (req, res) => {
@@ -12,7 +12,7 @@ const CreateTypingStat = async (req, res) => {
         return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    const typingStat = new TypingStat({
+    const typingStat = new Typingstat({
         user_id,
         code_snippet_id,
         typing_speed: parseFloat(typing_speed),
@@ -42,7 +42,7 @@ const FetchTypingStats = async (req, res) => {
         // user_id ที่ได้มาจาก token ผ่าน middleware ของ JWT
         const user_id = req.userId;
 
-        const typingStats = await TypingStat.find({ user_id })
+        const typingStats = await Typingstat.find({ user_id })
             .populate('user_id', 'username email') // แสดงเฉพาะ username และ email
             .populate('code_snippet_id', 'snippet_text') // แสดงเฉพาะ snippet_text
             .populate('module_id', 'module_name') // แสดงเฉพาะ module_name
@@ -61,7 +61,7 @@ const FetchTypingStats = async (req, res) => {
 // Fetch All TypingStats
 const FetchAllTypingStats = async (req, res) => {
     try {
-        const typingStats = await TypingStat.find()
+        const typingStats = await Typingstat.find()
             .populate('user_id', 'username') // แสดงเฉพาะ username และ email
             .populate('code_snippet_id', 'snippet_text') // แสดงเฉพาะ snippet_text
             .populate('module_id', 'module_name') // แสดงเฉพาะ module_name
@@ -78,7 +78,7 @@ const FetchAllTypingStats = async (req, res) => {
 
 const fetchLeaderboard = async (req, res) => {
     try {
-        const leaderboard = await TypingStat.aggregate([
+        const leaderboard = await Typingstat.aggregate([
             {
                 // จัดกลุ่มตาม user_id และหา typing_speed ที่สูงสุดของแต่ละคน
                 $group: {
@@ -99,7 +99,7 @@ const fetchLeaderboard = async (req, res) => {
         ]).exec();
 
         // Populate เพื่อดึง username ของ user
-        const populatedLeaderboard = await TypingStat.populate(leaderboard, {
+        const populatedLeaderboard = await Typingstat.populate(leaderboard, {
             path: "user_id",
             select: "username"
         });
@@ -117,7 +117,7 @@ const DeleteTypingStat = async (req, res) => {
     const { id } = req.params;
 
     try {
-        await TypingStat.findByIdAndDelete(id);
+        await Typingstat.findByIdAndDelete(id);
         res.status(200).json({ message: 'Typing stat deleted successfully' });
     } catch (error) {
         console.error('Error deleting typing stat:', error);
