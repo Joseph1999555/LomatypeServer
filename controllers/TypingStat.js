@@ -1,4 +1,4 @@
-const Typingstat = require('../models/TypingStat');
+const Typingstat = require('../models/Typingstat');
 // Typingstat is Typingstat
 
 // Create TypingStat with validation
