@@ -1,4 +1,3 @@
-const { use } = require('bcryptjs/promises');
 const mongoose = require('mongoose');
 
 const TypingstatSchema = new mongoose.Schema({
