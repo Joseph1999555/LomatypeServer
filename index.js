@@ -57,7 +57,7 @@ const fetchRandomCodeSnippet = async () => {
 
 // เมื่อมีการเชื่อมต่อ WebSocket
 wss.on('connection', (ws) => {
-  console.log('WebSocket client connected');
+  //console.log('WebSocket client connected');
 
   // ฟังก์ชันเพื่อจับคู่ผู้เล่น
   const matchPlayer = async () => {
@@ -69,8 +69,6 @@ wss.on('connection', (ws) => {
 
       // ดึงโค้ดตัวอย่าง
       const codeSnippet = await fetchRandomCodeSnippet(); // ปรับเรียกใช้งานฟังก์ชันให้เหมาะสม
-
-      console.log('RandomCodeSnippet:', codeSnippet);
 
       // จับคู่ผู้เล่นและเก็บข้อมูลใน matchedPlayers
       matchedPlayers.set(player1.id, player2);
@@ -102,7 +100,6 @@ wss.on('connection', (ws) => {
   // รับข้อความจาก client
   ws.on('message', (message) => {
     const data = JSON.parse(message);
-    console.log('Received message:', data);
 
     // ตรวจสอบประเภทของ event
     if (data.event === 'request_match') {
@@ -127,27 +124,61 @@ wss.on('connection', (ws) => {
         }));
       }
     } else if (data.event === 'player_stats_update') {
-      ws.wpm = data.stats.wpm;
-      ws.accuracy = data.stats.accuracy;
-    }else if (data.event === 'match_end') {
+      if (data.stats && typeof data.stats.wpm === 'number' && typeof data.stats.accuracy === 'number') {
+        // อัพเดตสถิติของผู้เล่น
+        ws.wpm = data.stats.wpm;
+        ws.accuracy = data.stats.accuracy;
+
+        const opponent = matchedPlayers.get(ws.id);
+        if (opponent) {
+          opponent.send(JSON.stringify({
+            event: 'opponent_stats_update',
+            stats: {
+              userId: ws.id,
+              wpm: ws.wpm,
+              accuracy: ws.accuracy,
+            }
+          }));
+        }
+      } else {
+        console.error("Invalid stats format received:", data.stats);
+      }
+    } else if (data.event === 'match_end') {
       const opponent = matchedPlayers.get(ws.id);
       if (opponent) {
-        // ส่งสถิติการแข่งขันให้กับผู้เล่นทั้งสอง
-        const statistics = {
-          event: 'end_game',
-          data: data.data,
-          playerId: ws.id,
-        };
-
-        opponent.send(JSON.stringify(statistics));
-        ws.send(JSON.stringify(statistics));
-      } 
-    } 
+  
+          // ส่งสถิติของ Player 1 ไปยังทั้ง Player 1 และ Player 2
+          const player1Stats = {
+              event: 'update_final_stats',
+              userId: ws.id,
+              username: ws.username,
+              wpm: ws.wpm,
+              accuracy: ws.accuracy,
+          };
+  
+          // ส่งสถิติของ Player 2
+          const player2Stats = {
+              event: 'update_final_stats',
+              userId: opponent.id,
+              username: opponent.username,
+              wpm: opponent.wpm,
+              accuracy: opponent.accuracy,
+          };
+  
+          // ส่งข้อมูลไปยังทั้งคู่
+          ws.send(JSON.stringify(player1Stats));
+          opponent.send(JSON.stringify(player1Stats));
+          
+          ws.send(JSON.stringify(player2Stats));
+          opponent.send(JSON.stringify(player2Stats));
+      }
+  }
+  
   });
 
   // เมื่อปิดการเชื่อมต่อ
   ws.on('close', () => {
-    console.log('WebSocket client disconnected');
+    //console.log('WebSocket client disconnected');
 
     // ลบผู้เล่นที่ออกจาก waitingPlayers
     const index = waitingPlayers.indexOf(ws);

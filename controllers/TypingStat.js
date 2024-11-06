@@ -8,8 +8,6 @@ const CreateTypingStat = async (req, res) => {
         difficult_id, language_id
     } = req.body;
 
-    console.log("stat", req.body); // ตรวจสอบข้อมูลที่ได้รับจาก client
-
     if (!user_id || !code_snippet_id || !typing_speed || !typing_accuracy || typing_errors === undefined || !typing_time) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
@@ -72,7 +70,6 @@ const FetchAllTypingStats = async (req, res) => {
             .populate('language_id', 'language_name'); // แสดงเฉพาะ language_name
 
         res.status(200).json(typingStats);
-        console.log('Typing stats:', typingStats);
     } catch (error) {
         console.error('Error fetching typing stats:', error);
         res.status(500).json({ message: 'Error fetching typing stats', error });

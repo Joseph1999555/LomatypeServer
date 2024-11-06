@@ -2,7 +2,6 @@ const Module = require('../models/Module');
 
 const CreateModule = async (req, res) => {
     const { name, description } = req.body; // เพิ่ม description
-    console.log('CreateModule', name, description);
     // ตรวจสอบว่ามีการส่งข้อมูลที่จำเป็นทั้งหมด
     if (!name || !description) {
         return res.status(400).json({ message: 'Module name and description are required' });
@@ -33,7 +32,6 @@ const FetchModules = async (req, res) => {
 const UpdateModule = async (req, res) => {
     const { id } = req.params;
     const { name, description } = req.body; // เพิ่ม description
-    console.log('UpdateModule', id, name, description);
 
     // ตรวจสอบว่ามีการส่งข้อมูลที่จำเป็นทั้งหมด
     if (!name || !description) {

@@ -18,9 +18,6 @@ const FetchCodeSnippets = async (req, res) => {
 const FetchCodeSnippet2 = async (req, res) => {
     try {
         const { language, type, difficulty } = req.query;
-        console.log('language:', language);
-        console.log('type:', type);
-        console.log('difficulty:', difficulty);
 
         // ตรวจสอบว่ามีการส่งค่า language, type, และ difficulty มาหรือไม่
         if (!language || !type || !difficulty) {
@@ -51,12 +48,17 @@ const FetchCodeSnippet2 = async (req, res) => {
 
 const RandomCodeSnippet = async () => {
     try {
-        // สมมติว่าเราดึงข้อมูลจากฐานข้อมูลโดยไม่ต้องการ req หรือ res
-        const snippets = await Snippet.find()
-            .populate('language_id')
-            .populate('module_id')
-            .populate('type_id')
-            .populate('difficulty_id');
+        // ดึงข้อมูลที่เป็น python ได้แต่ไม่ใช่ Do-While Loops
+        const snippets = await Snippet.find({
+            $or: [
+                { 'language_id.language_name': { $ne: 'python' } },
+                { 'type_id.type_name': { $ne: 'Do-While Loops' } }
+            ]
+        })
+        .populate('language_id')
+        .populate('module_id')
+        .populate('type_id')
+        .populate('difficulty_id');
 
         if (snippets.length === 0) {
             throw new Error('No snippets found');
@@ -69,6 +71,7 @@ const RandomCodeSnippet = async () => {
         return null; // หรือคุณอาจจะต้องการจัดการข้อผิดพลาดในวิธีอื่น
     }
 };
+
 
 
 
@@ -102,8 +105,6 @@ const CreateCodeSnippet = async (req, res) => {
 const UpdateCodeSnippet = async (req, res) => {
     const  id  = req.params.id;
     const { snippet_text, result } = req.body;
-    console.log('snippet_text:', snippet_text);
-    console.log('result:', result);
 
     try {
         await Snippet.findByIdAndUpdate(id, { snippet_text, result });

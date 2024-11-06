@@ -3,7 +3,6 @@ const Type = require('../models/Type');
 // Create Type with validation
 const CreateType = async (req, res) => {
     const { name, module_id, type_description } = req.body;
-    console.log('CreateType', name, module_id, type_description);
 
     if (!name || !module_id) {
         return res.status(400).json({ message: 'Name and Module ID are required' });

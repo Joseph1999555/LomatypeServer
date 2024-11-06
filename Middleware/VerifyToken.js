@@ -23,16 +23,8 @@ const verifyToken = (req, res, next) => {
       return res.status(500).json({ message: 'Failed to authenticate token' });
     }
 
-    console.log('Token decoded successfully:', decoded);
-
     // ตั้งค่า req.userId จากข้อมูลที่ถอดรหัสมา
     req.userId = decoded.id;
-
-    if (!req.userId) {
-      console.error('No userId in token');
-    } else {
-      console.log('User ID extracted from token:', req.userId);
-    }
 
     next();
   });
