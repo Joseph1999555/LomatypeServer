@@ -22,6 +22,11 @@ app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Hello, World! The server is running.');
+});
+
+
 // เชื่อมต่อ MongoDB
 const dbURI = process.env.MONGODB_URI;
 mongoose.connect(dbURI, {
