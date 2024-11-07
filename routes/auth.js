@@ -22,7 +22,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
     const token = jwt.sign({ id: req.user._id, role: req.user.role }, process.env.JWT_SECRET, { expiresIn: '1h' }); 
     
     // Redirect ไปยังหน้า login พร้อมแนบ token ไปใน query parameter
-    res.redirect(`http://localhost:3000/login?token=${token}`);
+    res.redirect(`https://lomatypeclient.onrender.com/login?token=${token}`);
 });
 
 
