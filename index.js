@@ -5,6 +5,7 @@ const cors = require('cors');
 const passport = require('passport');
 const http = require('http'); // เพิ่มสำหรับ WebSocket
 const WebSocket = require('ws'); // เพิ่มสำหรับ WebSocket
+const path = require('path'); // เพิ่มสำหรับจัดการ static files
 
 const env = require('dotenv').config();
 const app = express();
@@ -24,6 +25,14 @@ app.use('/user', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, World! The server is running.');
+});
+
+// Serve static files from the "public" folder (กรณี build frontend ไว้ในโฟลเดอร์ public)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Redirect เส้นทางที่ไม่พบกลับไปยัง index.html เพื่อให้ client-side routing จัดการเอง
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 
