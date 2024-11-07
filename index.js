@@ -14,7 +14,7 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
 
-// Middleware
+// Middleware lslslsls
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
@@ -27,13 +27,13 @@ app.get('/', (req, res) => {
   res.send('Hello, World! The server is running.');
 });
 
-// Serve static files from the "public" folder (กรณี build frontend ไว้ในโฟลเดอร์ public)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Redirect เส้นทางที่ไม่พบกลับไปยัง index.html เพื่อให้ client-side routing จัดการเอง
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 
 
 // เชื่อมต่อ MongoDB
